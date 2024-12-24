@@ -1,0 +1,65 @@
+body{  
+    color: rgba(124, 124, 124, 0.89);
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    display: inline-block;
+    padding: 10px 40px;
+}
+
+.chat{
+    background-color: aliceblue;
+    padding: 10px 40px;
+    border-radius:10px ;
+    margin-bottom: 30px; 
+    width: 40%;  
+}
+
+.message{
+    background-color: dodgerblue;
+    color: white;
+    padding: 8px 8px;
+    border-radius: 4px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 40px;
+}
+
+.date{
+    font-size:small;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.user-time{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.time{
+    font-size:small;
+}
+
+.create-btn{
+    background-color: dodgerblue;
+    color: white;
+    padding: 5px 15px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 1rem;
+}
+
+button{
+    background-color: white;
+    color: black;
+    border: 2px solid rgba(124, 124, 124, 0.89);
+    border-radius: 4px;
+    width: 60px;
+    text-align: center;
+    color: gray;
+ 
+
+}
+
+

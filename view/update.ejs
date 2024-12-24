@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat App</title>
+</head>
+<body>
+    <h1>Edit Chat</h1>
+
+    <form action="http://localhost:8080/home/<%= data._id %>/?_method=PATCH" method="post">
+        <p><i><%= data.from %></i></p>
+        <textarea name="message" rows="10" cols="30"><%= data.message %></textarea>
+        <p>Received by: <%= data.to %></p>
+        <button type="submit">Edit</button>
+    </form>
+</body>
+</html>
