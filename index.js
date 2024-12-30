@@ -2,7 +2,8 @@ const express = require('express');
 const mongoose = require('mongoose');
 const path = require('path');
 const Chat = require('./model/chat.js');
-var methodOverride = require('method-override')
+const methodOverride = require('method-override')
+const ExpressError = require('./ExpressError')
 
 const app = express();
 
@@ -26,50 +27,73 @@ async function main(){
 };
 
 
-app.get('/', (req, res)=>{
+function wrapAsync(fn){
+    return function (req, res, next){
+        fn(req, res, next).catch(err=>next(err))
+    }
+}
+
+app.get('/', (req, res,next)=>{
     res.send("Hi, I am root");
 });
 
-app.get('/home', async (req, res)=>{
+app.get('/home', wrapAsync(async (req, res,next)=>{
     let chats = await Chat.find();
     res.render('index.ejs',{chats});
-});
+})); 
 
 // creation of chat
-
-app.get('/home/new', async (req, res)=>{ 
+app.get('/home/new', wrapAsync((req, res,next)=>{
     res.render('new.ejs');
-});
+  }));
 
-app.post('/home', async(req, res)=>{
+app.post('/home', wrapAsync(async(req, res, next)=>{
     const created_at =  new Date();
     const{from,to, message,} = req.body;
+    if(!from){
+        next(new ExpressError(402, 'Sender name required!'))
+    }else if(!to){
+        next(new ExpressError(402, 'Reciever name required!'))
+
+    }else if(!message){
+        next(new ExpressError(402, 'Chat required!'))
+    }
     const newChat = await new Chat({from, to, message, created_at}).save();
     res.redirect('/home')
-});
+}));
 
 //Delete function
-app.delete('/home/:id', async(req, res)=>{ 
+app.delete('/home/:id', wrapAsync(async(req, res, next)=>{ 
     const {id} = req.params;
-    // const data = await Chat.findOne({_id:id})
-    // const deletedChat = await Chat.deleteOne({_id:id});
-    // console.log(deletedChat);
     const deletedChat = await Chat.findByIdAndDelete(id);
     res.redirect('/home');
-});
+}));
 
 //Update function
-app.get("/home/:id/update", async (req,res)=>{
+app.get("/home/:id/update", wrapAsync(async (req, res, next)=>{
     const {id} = req.params;
-    const data = await Chat.findById(id)
-    res.render('update.ejs',{data});
-});
+    const data = await Chat.findById(id);
 
-app.patch("/home/:id",async(req,res)=>{
+    if(!data){
+        next( new ExpressError(404,'chat not found')); 
+    }
+    res.render('update.ejs',{data});
+}));
+
+app.patch("/home/:id", wrapAsync(async(req, res, next)=>{
     const {id} = req.params;
     const{message} = req.body;
+    if(!message){
+        next(new ExpressError(402, 'message required'))
+    }
     await Chat.findByIdAndUpdate(id, {message:message});
     res.redirect('/home');
+}));
+
+app.use((err, req, res, next) => {
+    const{status = 500, message = 'Internal server error'} = err;
+    console.log(status, message);
+    res.status(status).send(message);
 })
 
 app.listen(8080,(req, res)=>{
