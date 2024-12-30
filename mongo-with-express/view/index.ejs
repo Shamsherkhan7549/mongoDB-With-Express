@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat App</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <h1>All Chats</h1>
+    <div class="container">  
+        <% chats.forEach(chat => { %>
+            <div class="chat">
+                <div class="user-time">
+                    <p><i>From: <%= chat.from %></i></p>
+                    <p class="time">Time: <%= chat.created_at.toString().slice(15, 21) %></p> 
+                </div>
+                <div class="message">
+                    <p class="">Message: <%= chat.message %></p>
+                    <form action="http://localhost:8080/home/<%= chat._id %>/update" method="get">
+                        <button>Edit</button>
+                    </form>
+                </div>
+                <p>Received by: <%= chat.to %></p>
+                <hr>
+                <div class="date">
+                    <p>Date: <%= chat.created_at.toString().slice(0, 15) %></p>
+                    <form action="http://localhost:8080/home/<%= chat._id %>/?_method=DELETE" method="post">
+                        <button type="submit">Delete</button>
+                    </form>
+                </div>
+            </div>
+        <% }) %>
+
+       <a class="create-btn" href="http://localhost:8080/home/new">Create Chat</a>
+    </div>
+</body>
+</html>
