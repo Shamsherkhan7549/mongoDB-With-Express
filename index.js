@@ -50,14 +50,14 @@ app.get('/home/new', wrapAsync((req, res,next)=>{
 app.post('/home', wrapAsync(async(req, res, next)=>{
     const created_at =  new Date();
     const{from,to, message,} = req.body;
-    if(!from){
-        next(new ExpressError(402, 'Sender name required!'))
-    }else if(!to){
-        next(new ExpressError(402, 'Reciever name required!'))
+    // if(!from){
+    //     next(new ExpressError(402, 'Sender name required!'))
+    // }else if(!to){
+    //     next(new ExpressError(402, 'Reciever name required!'))
 
-    }else if(!message){
-        next(new ExpressError(402, 'Chat required!'))
-    }
+    // }else if(!message){
+    //     next(new ExpressError(402, 'Chat required!'))
+    // }
     const newChat = await new Chat({from, to, message, created_at}).save();
     res.redirect('/home')
 }));
@@ -89,6 +89,20 @@ app.patch("/home/:id", wrapAsync(async(req, res, next)=>{
     await Chat.findByIdAndUpdate(id, {message:message});
     res.redirect('/home');
 }));
+
+const handleError = (err) =>{
+    console.log("this is validation error all input required please enter");
+    console.log(err.message)
+    return err
+};
+
+app.use((err, req, res, next)=>{
+    console.log(err.name)
+    if(err.name === 'ValidationError'){
+        handleError(err)
+    }
+   next(err)
+})
 
 app.use((err, req, res, next) => {
     const{status = 500, message = 'Internal server error'} = err;
